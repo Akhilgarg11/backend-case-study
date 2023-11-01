@@ -1,5 +1,7 @@
 package com.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -9,19 +11,24 @@ public class OrderItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int orderItemID;
 	
-	@OneToOne
+	@ManyToOne
+	@JsonIgnore
+	private UserOrder userOrder;
+	
+	@ManyToOne
 	private ProductDetails product;
 	
 	private int quantity;
-	
+
 	public OrderItem() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderItem(int orderItemID, ProductDetails product, int quantity) {
+	public OrderItem(int orderItemID, UserOrder userOrder, ProductDetails product, int quantity) {
 		super();
 		this.orderItemID = orderItemID;
+		this.userOrder = userOrder;
 		this.product = product;
 		this.quantity = quantity;
 	}
@@ -32,6 +39,14 @@ public class OrderItem {
 
 	public void setOrderItemID(int orderItemID) {
 		this.orderItemID = orderItemID;
+	}
+
+	public UserOrder getUserOrder() {
+		return userOrder;
+	}
+
+	public void setUserOrder(UserOrder userOrder) {
+		this.userOrder = userOrder;
 	}
 
 	public ProductDetails getProduct() {
@@ -50,6 +65,7 @@ public class OrderItem {
 		this.quantity = quantity;
 	}
 	
+
 	
 	
 }

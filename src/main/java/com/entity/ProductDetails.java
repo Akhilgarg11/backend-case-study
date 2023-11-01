@@ -28,6 +28,10 @@ public class ProductDetails {
 	@OneToMany(mappedBy="product")
 	private List<CartItem> cartItems;
 	
+	@JsonIgnore
+	@OneToMany(mappedBy="product")
+	private List<OrderItem> orderItems;
+	
 	public ProductDetails() {
 		super();
 		// TODO Auto-generated constructor stub

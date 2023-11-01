@@ -1,5 +1,7 @@
 package com.entity;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -7,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -32,6 +35,9 @@ public class UserDetails {
 	@OneToOne(cascade = CascadeType.ALL)
 	Cart cart;
 	
+	@OneToMany(mappedBy="user",cascade = CascadeType.ALL)
+	List<UserOrder> userOrders;
+	
 	@OneToOne(cascade = CascadeType.ALL)
 	private UserAddress address;
 	
@@ -50,6 +56,16 @@ public class UserDetails {
 		this.address = address;
 	}
 	
+	
+	
+	public List<UserOrder> getUserOrders() {
+		return userOrders;
+	}
+
+	public void setUserOrders(List<UserOrder> userOrders) {
+		this.userOrders = userOrders;
+	}
+
 	public Cart getCart() {
 		return cart;
 	}
