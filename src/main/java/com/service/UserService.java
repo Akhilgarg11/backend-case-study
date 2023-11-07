@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.dto.LoginRequest;
 import com.dto.SignupRequest;
+import com.dto.UpdateUserRequest;
 import com.entity.UserDetails;
+import com.repository.AddressRepository;
 import com.repository.UserRepository;
 
 @Service
@@ -17,7 +19,8 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private AddressService addressService;
+	private AddressRepository addressRepo;
+
 
 	public UserDetails createUser(SignupRequest signupRequest) {
 
@@ -25,28 +28,42 @@ public class UserService {
 		user.setEmail(signupRequest.getEmail());
 		user.setName(signupRequest.getName());
 		user.setPassword(signupRequest.getPassword());
+	
+		user.setRole("user");
 
 		userRepository.save(user);
 
 		return user;
 
 	}
+	
+	public UserDetails createSeller(SignupRequest signupRequest) {
+		UserDetails user = new UserDetails();
+		user.setEmail(signupRequest.getEmail());
+		user.setName(signupRequest.getName());
+		user.setPassword(signupRequest.getPassword());
+	
+		user.setRole("seller");
 
-	public UserDetails updateProfile(UserDetails updateUser) {
+		userRepository.save(user);
 
-		int id = updateUser.getUserID();
+		return user;
+	}
+
+	public UserDetails updateProfile(UpdateUserRequest updateUser) {
+
+		int id = updateUser.getId();
 		Optional<UserDetails> optional = userRepository.findById(id);
 		UserDetails user = (UserDetails) optional.get();
 
-		user.setEmail(updateUser.getEmail());
 		user.setName(updateUser.getName());
-		user.setPassword(updateUser.getPassword());
 		user.setPhone(updateUser.getPhone());
 		
 		if(user.getAddress() != null) {
 		int addressId = user.getAddress().getId();
 		user.setAddress(updateUser.getAddress());
-		addressService.deleteAddress(addressId);
+		
+		addressRepo.deleteById(addressId);
 		}
 		
 		else user.setAddress(updateUser.getAddress());
@@ -56,11 +73,15 @@ public class UserService {
 
 	}
 
-	public void loginUser(LoginRequest loginRequest) {
-
-		UserDetails user = new UserDetails();
-		user.setEmail(loginRequest.getEmail());
-		user.setPassword(loginRequest.getPassword());
+	public Boolean loginUser(LoginRequest loginRequest) {
+		
+		String email = loginRequest.getEmail();
+		String password = loginRequest.getPassword();
+		
+		Optional<UserDetails> userOptional =  userRepository.ifCorrectCredentials(email, password);
+		
+		if(userOptional.isPresent()) return true;
+		else return false;
 
 	}
 

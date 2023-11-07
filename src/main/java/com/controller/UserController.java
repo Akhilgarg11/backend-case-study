@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dto.LoginRequest;
 import com.dto.SignupRequest;
+import com.dto.UpdateUserRequest;
 import com.entity.UserDetails;
 import com.generic.GenericResponse;
 import com.service.UserService;
@@ -25,6 +27,19 @@ public class UserController {
 		return "Hello World";
 	}
 	
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+		Boolean correctCredentialsOrNot; 
+		try {
+			correctCredentialsOrNot = this.userService.loginUser(loginRequest);
+		} catch(Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
+		} 
+		
+		return new ResponseEntity<>(new GenericResponse<>( correctCredentialsOrNot , "----" , true) , HttpStatus.OK) ;
+	}
+	
+	
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
 		UserDetails user; 
@@ -37,8 +52,20 @@ public class UserController {
 		return new ResponseEntity<>(new GenericResponse<>( "userID:" + user.getUserID(), "Account Created Succesfully!", true) , HttpStatus.OK) ;
 	}
 	
+	@PostMapping("/seller/signup")
+	public ResponseEntity<?> sellerSignup(@RequestBody SignupRequest signupRequest) {
+		UserDetails user; 
+		try {
+		user = this.userService.createUser(signupRequest);
+		} catch(Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
+		} 
+		
+		return new ResponseEntity<>(new GenericResponse<>( "userID:" + user.getUserID(), "Seller Account Created Succesfully!", true) , HttpStatus.OK) ;
+	}
+	
 	@PostMapping("/updateProfile")
-	public ResponseEntity<?> updateUser(@RequestBody UserDetails updateUser) {
+	public ResponseEntity<?> updateUser(@RequestBody UpdateUserRequest updateUser) {
 		UserDetails user; 
 		try {
 		user = this.userService.updateProfile(updateUser);

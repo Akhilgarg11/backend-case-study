@@ -1,5 +1,7 @@
 package com.dto;
 
+import com.entity.ImageModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,15 @@ public class AddProductRequest {
 	private String details;
 	private String category;
 	private String brand;
+	private ImageModel productImage;
 	
+
+	public ImageModel getProductImage() {
+		return productImage;
+	}
+	public void setProductImage(ImageModel productImage) {
+		this.productImage = productImage;
+	}
 	public String getName() {
 		return name;
 	}

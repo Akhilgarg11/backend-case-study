@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,12 +26,16 @@ public class UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userID;
 
-
 	private String name;
+	
+	@Column(unique=true)
 	private String email;
+	
 	private String password;
 	private String phone;
 	
+	String role;
+
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL)
 	Cart cart;
@@ -40,6 +45,14 @@ public class UserDetails {
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	private UserAddress address;
+	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 	
 	public UserDetails() {
 		super();

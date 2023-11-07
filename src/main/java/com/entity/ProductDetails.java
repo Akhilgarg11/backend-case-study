@@ -24,6 +24,10 @@ public class ProductDetails {
 	private String category;
 	private String brand;
 	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "image_id")
+	private ImageModel productImage;
+	
 	@JsonIgnore
 	@OneToMany(mappedBy="product")
 	private List<CartItem> cartItems;
@@ -84,6 +88,36 @@ public class ProductDetails {
 
 	public void setBrand(String brand) {
 		this.brand = brand;
+	}
+
+
+	public ImageModel getProductImage() {
+		return productImage;
+	}
+
+
+	public void setProductImage(ImageModel productImage) {
+		this.productImage = productImage;
+	}
+
+
+	public List<CartItem> getCartItems() {
+		return cartItems;
+	}
+
+
+	public void setCartItems(List<CartItem> cartItems) {
+		this.cartItems = cartItems;
+	}
+
+
+	public List<OrderItem> getOrderItems() {
+		return orderItems;
+	}
+
+
+	public void setOrderItems(List<OrderItem> orderItems) {
+		this.orderItems = orderItems;
 	}
 	
 }

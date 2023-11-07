@@ -10,12 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.entity.ProductDetails;
 import com.entity.UserOrder;
 import com.generic.GenericResponse;
 import com.service.OrderService;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/order")
