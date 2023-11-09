@@ -14,10 +14,9 @@ public class AddProductRequest {
 	private String price;
 	private String details;
 	private String category;
-	private String brand;
+	private String brand;	
 	private ImageModel productImage;
 	
-
 	public ImageModel getProductImage() {
 		return productImage;
 	}

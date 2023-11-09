@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import com.dto.AddProductRequest;
 import com.dto.Filterdto;
 import com.entity.ProductDetails;
+import com.entity.UserDetails;
 import com.repository.ProductRepository;
+import com.repository.UserRepository;
 
 @Service
 public class ProductService {
@@ -17,9 +19,12 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	private int MAXPRICE = 0;
 
-	public ProductDetails addProduct(AddProductRequest addProduct) {
+	public ProductDetails addProduct(AddProductRequest addProduct, int sellerId) {
 
 		ProductDetails product = new ProductDetails();
 
@@ -28,6 +33,12 @@ public class ProductService {
 		product.setName(addProduct.getName());
 		product.setDetails(addProduct.getDetails());
 		product.setPrice(addProduct.getPrice());
+		product.setProductImage(addProduct.getProductImage());
+		
+		Optional<UserDetails> sellerOptional = userRepository.findById(sellerId); 
+		UserDetails seller = sellerOptional.get();
+		
+		product.setSeller(seller);
 		MAXPRICE = Math.max(MAXPRICE, Integer.parseInt(addProduct.getPrice()));
 		productRepository.save(product);
 

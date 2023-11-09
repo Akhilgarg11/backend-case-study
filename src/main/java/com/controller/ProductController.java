@@ -30,14 +30,16 @@ public class ProductController {
 	@Autowired
 	ProductService productService;
 	
-	@PostMapping(value = {"/addProduct"} , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE} )
+	@PostMapping(value = {"/addProduct/{sellerId}"} , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE} )
 	public ResponseEntity<?> addProduct(@RequestPart("product") AddProductRequest addProduct,
-				@RequestPart("imageFile") MultipartFile imageFile) {
+				@RequestPart("imageFile") MultipartFile imageFile, @PathVariable("sellerId") int sellerId) {
 		ProductDetails product;
 		try {
+						
 			ImageModel image = uploadImage(imageFile);
-			addProduct.setProductImage(image);	
-		product = this.productService.addProduct(addProduct);	
+			addProduct.setProductImage(image);
+
+			product = this.productService.addProduct(addProduct, sellerId);	
 		} catch(Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
 		} 
@@ -67,7 +69,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("/update")
-	public ResponseEntity<?> addProduct(@RequestBody ProductDetails updateProduct) {
+	public ResponseEntity<?> updateProduct(@RequestBody ProductDetails updateProduct) {
 		ProductDetails product;
 		try {
 		product = this.productService.updateProduct(updateProduct);

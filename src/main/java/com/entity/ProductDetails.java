@@ -25,6 +25,10 @@ public class ProductDetails {
 	private String brand;
 	
 	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "seller_id")
+	private UserDetails seller;
+	
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "image_id")
 	private ImageModel productImage;
 	
@@ -40,6 +44,19 @@ public class ProductDetails {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	
+
+	public UserDetails getSeller() {
+		return seller;
+	}
+
+
+
+	public void setSeller(UserDetails seller) {
+		this.seller = seller;
+	}
+
 
 
 	public int getProductID() {

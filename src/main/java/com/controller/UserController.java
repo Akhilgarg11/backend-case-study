@@ -29,14 +29,14 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-		Boolean correctCredentialsOrNot; 
+		int userId; 
 		try {
-			correctCredentialsOrNot = this.userService.loginUser(loginRequest);
+			userId = this.userService.loginUser(loginRequest);
 		} catch(Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
 		} 
 		
-		return new ResponseEntity<>(new GenericResponse<>( correctCredentialsOrNot , "----" , true) , HttpStatus.OK) ;
+		return new ResponseEntity<>(new GenericResponse<>( userId , "----" , true) , HttpStatus.OK) ;
 	}
 	
 	
@@ -56,7 +56,7 @@ public class UserController {
 	public ResponseEntity<?> sellerSignup(@RequestBody SignupRequest signupRequest) {
 		UserDetails user; 
 		try {
-		user = this.userService.createUser(signupRequest);
+		user = this.userService.createSeller(signupRequest);
 		} catch(Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
 		} 

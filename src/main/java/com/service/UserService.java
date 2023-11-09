@@ -73,15 +73,17 @@ public class UserService {
 
 	}
 
-	public Boolean loginUser(LoginRequest loginRequest) {
+	public int loginUser(LoginRequest loginRequest) {
 		
 		String email = loginRequest.getEmail();
 		String password = loginRequest.getPassword();
 		
 		Optional<UserDetails> userOptional =  userRepository.ifCorrectCredentials(email, password);
 		
-		if(userOptional.isPresent()) return true;
-		else return false;
+		if(userOptional.isEmpty()) return -1;
+		
+		UserDetails user = userOptional.get();
+		return user.getUserID();
 
 	}
 
