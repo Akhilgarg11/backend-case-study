@@ -1,5 +1,7 @@
 package com.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,96 +14,131 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dto.LoginRequest;
 import com.dto.SignupRequest;
 import com.dto.UpdateUserRequest;
+import com.entity.ProductDetails;
 import com.entity.UserDetails;
 import com.generic.GenericResponse;
+import com.service.ProductService;
 import com.service.UserService;
 
 @RestController
 public class UserController {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
+	@Autowired
+	private ProductService productService;
+
 	@GetMapping("/")
 	public String hello() {
 		return "Hello World";
 	}
-	
+
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-		int userId; 
+		int userId;
 		try {
 			userId = this.userService.loginUser(loginRequest);
-		} catch(Exception e) {
-			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
-		} 
-		
-		return new ResponseEntity<>(new GenericResponse<>( userId , "----" , true) , HttpStatus.OK) ;
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(new GenericResponse<>(userId, "----", true), HttpStatus.OK);
 	}
-	
-	
+
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
-		UserDetails user; 
+		UserDetails user;
 		try {
-		user = this.userService.createUser(signupRequest);
-		} catch(Exception e) {
-			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
-		} 
-		
-		return new ResponseEntity<>(new GenericResponse<>( "userID:" + user.getUserID(), "Account Created Succesfully!", true) , HttpStatus.OK) ;
+			user = this.userService.createUser(signupRequest);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(
+				new GenericResponse<>("userID:" + user.getUserID(), "Account Created Succesfully!", true),
+				HttpStatus.OK);
 	}
-	
+
+	@PostMapping("/seller/login")
+	public ResponseEntity<?> sellerLogin(@RequestBody LoginRequest loginRequest) {
+		int userId;
+		try {
+			userId = this.userService.loginSeller(loginRequest);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(new GenericResponse<>(userId, "----", true), HttpStatus.OK);
+	}
+
 	@PostMapping("/seller/signup")
 	public ResponseEntity<?> sellerSignup(@RequestBody SignupRequest signupRequest) {
-		UserDetails user; 
+		UserDetails user;
 		try {
-		user = this.userService.createSeller(signupRequest);
-		} catch(Exception e) {
-			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
-		} 
-		
-		return new ResponseEntity<>(new GenericResponse<>( "userID:" + user.getUserID(), "Seller Account Created Succesfully!", true) , HttpStatus.OK) ;
+			user = this.userService.createSeller(signupRequest);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(
+				new GenericResponse<>("userID:" + user.getUserID(), "Seller Account Created Succesfully!", true),
+				HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/updateProfile")
 	public ResponseEntity<?> updateUser(@RequestBody UpdateUserRequest updateUser) {
-		UserDetails user; 
+		UserDetails user;
 		try {
-		user = this.userService.updateProfile(updateUser);
-		} catch(Exception e) {
-			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
-		} 
-		
-		return new ResponseEntity<>(new GenericResponse<>( user, "User Profile Updated Succesfully!", true) , HttpStatus.OK) ;
+			user = this.userService.updateProfile(updateUser);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(new GenericResponse<>(user, "User Profile Updated Succesfully!", true),
+				HttpStatus.OK);
 	}
-	
-	
-	
+
 	@GetMapping("/getprofile/{id}")
-	public ResponseEntity<?> getProfile(@PathVariable("id") int id){
-		
-		UserDetails user; 
+	public ResponseEntity<?> getProfile(@PathVariable("id") int id) {
+
+		UserDetails user;
 		try {
-		user = this.userService.getProfile(id);
-		} catch(Exception e) {
-			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
-		} 
-		
-		return new ResponseEntity<>(new GenericResponse<>( user , "User Fetched Succesfully!", true) , HttpStatus.OK) ;
-		
+			user = this.userService.getProfile(id);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(new GenericResponse<>(user, "User Fetched Succesfully!", true), HttpStatus.OK);
+
 	}
-	
+
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(@RequestBody int userId) {
 		UserDetails user;
 		try {
 			user = this.userService.logout(userId);
-		} catch(Exception e) {
-			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
-		} 
-		
-		return new ResponseEntity<>(new GenericResponse<>( "user with id:" +user.getUserID(), "Usser logged out Succesfully!", true) , HttpStatus.OK) ;
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(
+				new GenericResponse<>("user with id:" + user.getUserID(), "Usser logged out Succesfully!", true),
+				HttpStatus.OK);
 	}
-	
+
+	@GetMapping("/seller/getProducts/{sellerId}")
+	public ResponseEntity<?> getProductBySellerId(@PathVariable("sellerId") int sellerId) {
+
+		List<ProductDetails> products;
+		try {
+			products = this.productService.getProductsBySellerId(sellerId);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(products, HttpStatus.OK);
+
+	}
+
 }

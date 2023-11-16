@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dto.AddProductRequest;
 import com.dto.Filterdto;
@@ -52,6 +53,21 @@ public class ProductService {
 
 		return product;
 
+	}
+	
+	@Transactional
+	public void deleteProductById(int productId) {
+		productRepository.deleteProductById(productId);
+	}
+	
+	public List<ProductDetails> getProductsBySellerId(int sellerId) {
+		
+		Optional<UserDetails> sellerOptional = userRepository.findById(sellerId); 
+		UserDetails seller = sellerOptional.get();
+		
+		List<ProductDetails> list = productRepository.getProductsBySeller(seller);
+
+		return list;
 	}
 
 	public ProductDetails updateProduct(ProductDetails updateProduct) {

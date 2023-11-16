@@ -3,10 +3,13 @@ package com.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.entity.Cart;
 import com.entity.ProductDetails;
+import com.entity.UserDetails;
 
 public interface ProductRepository extends JpaRepository<ProductDetails, Integer> {
 
@@ -34,5 +37,12 @@ public interface ProductRepository extends JpaRepository<ProductDetails, Integer
 	
 	@Query("SELECT DISTINCT p.category FROM ProductDetails p ")
 	List<String> getAllCategory();
+	
+	@Query("SELECT p FROM ProductDetails p WHERE p.seller = :seller")
+	List<ProductDetails> getProductsBySeller(@Param("seller") UserDetails seller);
+	
+	@Modifying
+	@Query("DELETE FROM ProductDetails p WHERE p.productID = :id")
+	void deleteProductById(@Param("id") int productId);
 
 }

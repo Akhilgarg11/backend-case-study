@@ -122,4 +122,18 @@ public class ProductController {
 		
 	}
 	
+	@GetMapping("/deleteProduct/{productId}")
+	public ResponseEntity<?> deletProductbyId(@PathVariable("productId") int productId ) {
+		
+		try {
+		this.productService.deleteProductById(productId);
+		} catch(Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
+		} 
+		
+		return new ResponseEntity<>(new GenericResponse<>( null, "Product deleted Succesfully!", true) , HttpStatus.OK) ;
+	}
+	
+	
+	
 }

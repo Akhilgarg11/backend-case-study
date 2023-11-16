@@ -17,10 +17,9 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AddressRepository addressRepo;
-
 
 	public UserDetails createUser(SignupRequest signupRequest) {
 
@@ -28,7 +27,7 @@ public class UserService {
 		user.setEmail(signupRequest.getEmail());
 		user.setName(signupRequest.getName());
 		user.setPassword(signupRequest.getPassword());
-	
+
 		user.setRole("user");
 
 		userRepository.save(user);
@@ -36,13 +35,13 @@ public class UserService {
 		return user;
 
 	}
-	
+
 	public UserDetails createSeller(SignupRequest signupRequest) {
 		UserDetails user = new UserDetails();
 		user.setEmail(signupRequest.getEmail());
 		user.setName(signupRequest.getName());
 		user.setPassword(signupRequest.getPassword());
-	
+
 		user.setRole("seller");
 
 		userRepository.save(user);
@@ -58,30 +57,46 @@ public class UserService {
 
 		user.setName(updateUser.getName());
 		user.setPhone(updateUser.getPhone());
-		
-		if(user.getAddress() != null) {
-		int addressId = user.getAddress().getId();
-		user.setAddress(updateUser.getAddress());
-		
-		addressRepo.deleteById(addressId);
+
+		if (user.getAddress() != null) {
+			int addressId = user.getAddress().getId();
+			user.setAddress(updateUser.getAddress());
+
+			addressRepo.deleteById(addressId);
 		}
-		
-		else user.setAddress(updateUser.getAddress());
-		
+
+		else
+			user.setAddress(updateUser.getAddress());
+
 		userRepository.save(user);
 		return user;
 
 	}
 
 	public int loginUser(LoginRequest loginRequest) {
-		
+
 		String email = loginRequest.getEmail();
 		String password = loginRequest.getPassword();
-		
-		Optional<UserDetails> userOptional =  userRepository.ifCorrectCredentials(email, password);
-		
-		if(userOptional.isEmpty()) return -1;
-		
+
+		Optional<UserDetails> userOptional = userRepository.ifCorrectUserCredentials(email, password);
+
+		if (userOptional.isEmpty())
+			return -1;
+
+		UserDetails user = userOptional.get();
+		return user.getUserID();
+
+	}
+
+	public int loginSeller(LoginRequest loginRequest) {
+		String email = loginRequest.getEmail();
+		String password = loginRequest.getPassword();
+
+		Optional<UserDetails> userOptional = userRepository.ifCorrectSellerCredentials(email, password);
+
+		if (userOptional.isEmpty())
+			return -1;
+
 		UserDetails user = userOptional.get();
 		return user.getUserID();
 
