@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dto.AddProductRequest;
 import com.dto.Filterdto;
+import com.dto.UpdateProductRequest;
 import com.entity.ProductDetails;
 import com.entity.UserDetails;
 import com.repository.ProductRepository;
@@ -70,10 +71,9 @@ public class ProductService {
 		return list;
 	}
 
-	public ProductDetails updateProduct(ProductDetails updateProduct) {
+	public ProductDetails updateProduct(UpdateProductRequest updateProduct, int productId) {
 
-		int id = updateProduct.getProductID();
-		Optional<ProductDetails> optional = productRepository.findById(id);
+		Optional<ProductDetails> optional = productRepository.findById(productId);
 		ProductDetails product = (ProductDetails) optional.get();
 
 		product.setBrand(updateProduct.getBrand());
@@ -81,6 +81,8 @@ public class ProductService {
 		product.setName(updateProduct.getName());
 		product.setDetails(updateProduct.getDetails());
 		product.setPrice(updateProduct.getPrice());
+		product.setProductImage(updateProduct.getProductImage());
+		
 		MAXPRICE = Math.max(MAXPRICE, Integer.parseInt(updateProduct.getPrice()));
 		productRepository.save(product);
 

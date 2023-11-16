@@ -24,11 +24,11 @@ public class ProductDetails {
 	private String category;
 	private String brand;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "seller_id")
 	private UserDetails seller;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "image_id")
 	private ImageModel productImage;
 	

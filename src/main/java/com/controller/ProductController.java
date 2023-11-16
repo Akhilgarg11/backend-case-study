@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dto.AddProductRequest;
 import com.dto.Filterdto;
+import com.dto.UpdateProductRequest;
 import com.entity.ImageModel;
 import com.entity.ProductDetails;
 import com.generic.GenericResponse;
@@ -57,23 +58,41 @@ public class ProductController {
 	@GetMapping("/getById/{id}")
 	public ResponseEntity<?> getProduct(@PathVariable("id") int id){
 		
-		ProductDetails product; 
+		ProductDetails product;
+		AddProductRequest p = new AddProductRequest();
 		try {
 		product = this.productService.getProduct(id);
+		
+		p.setBrand(product.getBrand());
+		p.setCategory(product.getCategory());
+		p.setDetails(product.getDetails());
+		p.setName(product.getName());
+		p.setPrice(product.getPrice());
+		p.setProductImage(product.getProductImage());
+		
+		
 		} catch(Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
 		} 
 		
-		return new ResponseEntity<>(new GenericResponse<>( product , "Product Fetched Succesfully!", true) , HttpStatus.OK) ;
+		return new ResponseEntity<>( p , HttpStatus.OK) ;
 		
 	}
 	
-	@PostMapping("/update")
-	public ResponseEntity<?> updateProduct(@RequestBody ProductDetails updateProduct) {
+	@PostMapping( value= {"/update/{productId}"} , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE} )
+	public ResponseEntity<?> updateProduct(@RequestPart("product") UpdateProductRequest updateProduct, 
+			@RequestPart("imageFile") MultipartFile imageFile,
+			@PathVariable("productId") int productId) {
+		
 		ProductDetails product;
 		try {
-		product = this.productService.updateProduct(updateProduct);
-		} catch(Exception e) {
+			
+			ImageModel image = uploadImage(imageFile);
+			updateProduct.setProductImage(image);
+
+			product = this.productService.updateProduct(updateProduct, productId);	
+		} 
+		catch(Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
 		} 
 		
