@@ -1,5 +1,6 @@
 package com.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dto.AddProductRequest;
 import com.dto.Filterdto;
+import com.dto.GetProductResponse;
 import com.dto.UpdateProductRequest;
 import com.entity.ProductDetails;
 import com.entity.UserDetails;
@@ -46,6 +48,35 @@ public class ProductService {
 
 		return product;
 	}
+	
+	public List<GetProductResponse> getAllProducts(){
+		
+		Optional<List<ProductDetails>> optional = productRepository.getAllProducts();
+		
+		List<GetProductResponse> list = new ArrayList<GetProductResponse>();
+		
+		if(optional.isPresent()) {
+			List<ProductDetails> p = optional.get();
+			
+			for(int i=0; i<p.size(); i++) {
+				GetProductResponse resp = new GetProductResponse();
+				resp.setBrand(p.get(i).getBrand());
+				resp.setCategory(p.get(i).getCategory());
+				resp.setDetails(p.get(i).getDetails());
+				resp.setName(p.get(i).getName());
+				resp.setPrice(p.get(i).getPrice());
+				resp.setProductImage(p.get(i).getProductImage());
+				resp.setProductId(p.get(i).getProductID());
+				
+				list.add(resp);
+			}
+			
+			return list;
+		}
+		
+		else return null;
+		
+	}
 
 	public ProductDetails getProduct(int id) {
 
@@ -81,7 +112,6 @@ public class ProductService {
 		product.setName(updateProduct.getName());
 		product.setDetails(updateProduct.getDetails());
 		product.setPrice(updateProduct.getPrice());
-		product.setProductImage(updateProduct.getProductImage());
 		
 		MAXPRICE = Math.max(MAXPRICE, Integer.parseInt(updateProduct.getPrice()));
 		productRepository.save(product);

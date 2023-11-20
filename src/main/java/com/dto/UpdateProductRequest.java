@@ -8,7 +8,6 @@ public class UpdateProductRequest {
 	private String details;
 	private String category;
 	private String brand;	
-	private ImageModel productImage;
 	
 	public String getName() {
 		return name;
@@ -40,12 +39,6 @@ public class UpdateProductRequest {
 	public void setBrand(String brand) {
 		this.brand = brand;
 	}
-	public ImageModel getProductImage() {
-		return productImage;
-	}
-	public void setProductImage(ImageModel productImage) {
-		this.productImage = productImage;
-	}
-	
+
 	
 }

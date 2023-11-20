@@ -1,7 +1,9 @@
 package com.repository;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.hibernate.mapping.Selectable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -44,5 +46,8 @@ public interface ProductRepository extends JpaRepository<ProductDetails, Integer
 	@Modifying
 	@Query("DELETE FROM ProductDetails p WHERE p.productID = :id")
 	void deleteProductById(@Param("id") int productId);
+	
+	@Query("Select p from ProductDetails as p")
+	Optional<List<ProductDetails>> getAllProducts();
 
 }

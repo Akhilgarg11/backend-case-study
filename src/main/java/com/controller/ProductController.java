@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dto.AddProductRequest;
 import com.dto.Filterdto;
+import com.dto.GetProductResponse;
 import com.dto.UpdateProductRequest;
 import com.entity.ImageModel;
 import com.entity.ProductDetails;
@@ -79,17 +80,12 @@ public class ProductController {
 		
 	}
 	
-	@PostMapping( value= {"/update/{productId}"} , consumes = {MediaType.MULTIPART_FORM_DATA_VALUE} )
-	public ResponseEntity<?> updateProduct(@RequestPart("product") UpdateProductRequest updateProduct, 
-			@RequestPart("imageFile") MultipartFile imageFile,
-			@PathVariable("productId") int productId) {
+	@PostMapping("/update/{productId}"  )
+	public ResponseEntity<?> updateProduct(@RequestBody UpdateProductRequest updateProduct, @PathVariable("productId") int productId) {
 		
 		ProductDetails product;
 		try {
 			
-			ImageModel image = uploadImage(imageFile);
-			updateProduct.setProductImage(image);
-
 			product = this.productService.updateProduct(updateProduct, productId);	
 		} 
 		catch(Exception e) {
@@ -153,6 +149,16 @@ public class ProductController {
 		return new ResponseEntity<>(new GenericResponse<>( null, "Product deleted Succesfully!", true) , HttpStatus.OK) ;
 	}
 	
-	
+	@GetMapping("/getAllProducts")
+	public ResponseEntity<?> getAllProducts() {
+		List<GetProductResponse> list;
+		try {
+		list = this.productService.getAllProducts();
+		} catch(Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
+		} 
+		
+		return new ResponseEntity<>(list, HttpStatus.OK) ;
+	}
 	
 }

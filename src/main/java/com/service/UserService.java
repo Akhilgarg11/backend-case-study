@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.dto.LoginRequest;
 import com.dto.SignupRequest;
 import com.dto.UpdateUserRequest;
+import com.dto.UserResponse;
 import com.entity.UserDetails;
 import com.repository.AddressRepository;
 import com.repository.UserRepository;
@@ -102,12 +103,21 @@ public class UserService {
 
 	}
 
-	public UserDetails getProfile(int userID) {
+	public UserResponse getProfile(int userID) {
 
 		Optional<UserDetails> optional = userRepository.findById(userID);
 		UserDetails user = (UserDetails) optional.get();
-
-		return user;
+		
+		UserResponse userProfile = new UserResponse();
+		
+		userProfile.setAddress(user.getAddress());
+		userProfile.setCart(user.getCart());
+		userProfile.setEmail(user.getEmail());
+		userProfile.setName(user.getName());
+		userProfile.setPhone(user.getPhone());
+		userProfile.setUserOrders(user.getUserOrders());
+		
+		return userProfile;
 	}
 
 	public UserDetails logout(int id) {

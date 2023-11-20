@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dto.LoginRequest;
 import com.dto.SignupRequest;
 import com.dto.UpdateUserRequest;
+import com.dto.UserResponse;
 import com.entity.ProductDetails;
 import com.entity.UserDetails;
 import com.generic.GenericResponse;
@@ -102,14 +103,14 @@ public class UserController {
 	@GetMapping("/getprofile/{id}")
 	public ResponseEntity<?> getProfile(@PathVariable("id") int id) {
 
-		UserDetails user;
+		UserResponse user;
 		try {
 			user = this.userService.getProfile(id);
 		} catch (Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<>(new GenericResponse<>(user, "User Fetched Succesfully!", true), HttpStatus.OK);
+		return new ResponseEntity<>( user, HttpStatus.OK);
 
 	}
 

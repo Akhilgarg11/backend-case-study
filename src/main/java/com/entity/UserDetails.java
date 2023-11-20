@@ -38,10 +38,10 @@ public class UserDetails {
 
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL)
-	Cart cart;
+	private Cart cart;
 	
 	@OneToMany(mappedBy="user",cascade = CascadeType.ALL)
-	List<UserOrder> userOrders;
+	private List<UserOrder> userOrders;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	private UserAddress address;

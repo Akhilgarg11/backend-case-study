@@ -5,7 +5,6 @@ import com.entity.UserAddress;
 public class UpdateUserRequest {
 	int id;
 	private String name;
-	private String role;
 	private String phone;
 	private UserAddress address;
 	
@@ -33,13 +32,6 @@ public class UpdateUserRequest {
 		this.name = name;
 	}
 
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
 
 	public String getPhone() {
 		return phone;
