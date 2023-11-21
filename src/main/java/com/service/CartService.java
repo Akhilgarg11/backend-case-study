@@ -32,7 +32,8 @@ public class CartService {
 	@Autowired
 	private UserRepository userRepo;
 
-	public CartItem addToCart(int userId, int productId) {
+	@Transactional
+	public CartItem addToCart(int userId, int productId, int quantity) {
 
 		UserDetails user;
 
@@ -61,13 +62,13 @@ public class CartService {
 		CartItem cartItem;
 		if (existingCartItem.isPresent()) {
 			cartItem = existingCartItem.get();
-			cartItem.setQuantity(cartItem.getQuantity() + 1);
+			cartItem.setQuantity(cartItem.getQuantity() + quantity);
 		} else {
 
 			cartItem = new CartItem();
 			cartItem.setProduct(product);
 			cartItem.setCart(cart);
-			cartItem.setQuantity(1);
+			cartItem.setQuantity(quantity);
 
 		}
 		itemRepo.save(cartItem);

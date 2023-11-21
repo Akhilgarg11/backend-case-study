@@ -23,16 +23,17 @@ public class CartController {
 	@Autowired
 	private CartService cartService;
 
-	@PostMapping("/{userId}/add/{productId}")
-	public ResponseEntity<?> addToCart(@PathVariable("userId") int userId, @PathVariable("productId") int productId) {
+	@GetMapping("/{userId}/add/{productId}/{quantity}")
+	public ResponseEntity<?> addToCart(@PathVariable("userId") int userId, @PathVariable("productId") int productId,
+			@PathVariable("quantity") int quantity) {
 		CartItem cartItem;
 		try {
-			cartItem = this.cartService.addToCart(userId, productId);
+			cartItem = this.cartService.addToCart(userId, productId, quantity);
 		} catch (Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<>(new GenericResponse<>(cartItem, "Product Added Succesfully!", true), HttpStatus.OK);
+		return new ResponseEntity<>(cartItem, HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}/getCart")
@@ -44,7 +45,7 @@ public class CartController {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<>(new GenericResponse<>(cart, "Cart Fetched Succesfully!", true), HttpStatus.OK);
+		return new ResponseEntity<>(cart, HttpStatus.OK);
 	}
 
 	@GetMapping("/{userId}/getCartItem/{itemId}")
@@ -60,7 +61,7 @@ public class CartController {
 		return new ResponseEntity<>(new GenericResponse<>(item, "Cart Item Fetched Succesfully!", true), HttpStatus.OK);
 	}
 
-	@GetMapping("{userId}/remove/{productId}")
+	@GetMapping("/{userId}/remove/{productId}")
 	public ResponseEntity<?> removeFromCart(@PathVariable("userId") int userId,
 			@PathVariable("productId") int productId) {
 		ProductDetails product;

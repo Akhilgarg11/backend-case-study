@@ -10,6 +10,7 @@ public class GetProductResponse {
 	private String category;
 	private String brand;	
 	private ImageModel productImage;
+	
 	public int getProductId() {
 		return productId;
 	}
