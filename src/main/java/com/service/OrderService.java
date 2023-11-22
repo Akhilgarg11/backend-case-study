@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dto.SelectedCartItem;
 import com.entity.Cart;
 import com.entity.CartItem;
 import com.entity.OrderItem;
@@ -45,7 +46,7 @@ public class OrderService {
 	private CartItemRepository cartItemRepo;
 
 	@Transactional
-	public UserOrder createOrder(int userId) {
+	public UserOrder createOrder(int userId, ArrayList<SelectedCartItem> selectedCartItems) {
 
 		UserDetails user;
 
@@ -59,40 +60,30 @@ public class OrderService {
 		Cart cart = userRepo.findCartByUserId(userId);
 		int cartId = cart.getCartID();
 
-		Optional<List<CartItem>> getCartItems = cartRepo.getAllcartItem(cartId);
-		List<CartItem> cartItems = getCartItems.get();
+		List<OrderItem> listOrderItems = new ArrayList<OrderItem>();
 
-		if (cartItems.size() == 0) {
-			System.out.println("hfjdks");
-			throw new EntityNotFoundException("Cart is Empty");
+		UserOrder userOrder = new UserOrder();
+		orderRepo.save(userOrder);
 
+		for (SelectedCartItem i : selectedCartItems) {
+			OrderItem orderItem = new OrderItem();
+			orderItem.setProduct(i.getProduct());
+			orderItem.setQuantity(i.getQuantity());
+			orderItem.setUserOrder(userOrder);
+			orderItemRepo.save(orderItem);
+			listOrderItems.add(orderItem);
+		}
+		userOrder.setUser(user);
+		userOrder.setOrderItems(listOrderItems);
+		
+		for(SelectedCartItem i : selectedCartItems) {
+			cartItemRepo.deleteByCartAndProduct(cart, i.getProduct());
 		}
 
-		else {
-			System.out.println("aaaaa");
-			
-			List<OrderItem> listOrderItems = new ArrayList<OrderItem>();
-
-			UserOrder userOrder = new UserOrder();
-			orderRepo.save(userOrder);
-
-			for (CartItem i : cartItems) {
-				OrderItem orderItem = new OrderItem();
-				orderItem.setProduct(i.getProduct());
-				orderItem.setQuantity(i.getQuantity());
-				orderItem.setUserOrder(userOrder);
-				orderItemRepo.save(orderItem);
-				listOrderItems.add(orderItem);
-			}
-			userOrder.setUser(user);
-			userOrder.setOrderItems(listOrderItems);
-
-			cartItemRepo.removeFromCart(cart);
-			cartRepo.save(cart);
-			userRepo.save(user);
-			orderRepo.save(userOrder);
-			return userOrder;
-		}
+		cartRepo.save(cart);
+		userRepo.save(user);
+		orderRepo.save(userOrder);
+		return userOrder;
 
 	}
 
@@ -129,7 +120,7 @@ public class OrderService {
 
 		UserOrder userOrder = new UserOrder();
 		orderRepo.save(userOrder);
-		
+
 		List<OrderItem> listOrderItems = new ArrayList<OrderItem>();
 
 		OrderItem orderItem = new OrderItem();
@@ -148,5 +139,57 @@ public class OrderService {
 		orderRepo.save(userOrder);
 		return userOrder;
 	}
+
+//	@Transactional
+//	public UserOrder createOrder(int userId) {
+//
+//		UserDetails user;
+//
+//		Optional<UserDetails> getUser = userRepo.findById(userId);
+//		if (getUser.isPresent()) {
+//			user = (UserDetails) getUser.get();
+//		} else {
+//			throw new EntityNotFoundException("User Not Exist");
+//		}
+//
+//		Cart cart = userRepo.findCartByUserId(userId);
+//		int cartId = cart.getCartID();
+//
+//		Optional<List<CartItem>> getCartItems = cartRepo.getAllcartItem(cartId);
+//		List<CartItem> cartItems = getCartItems.get();
+//
+//		if (cartItems.size() == 0) {
+//			System.out.println("hfjdks");
+//			throw new EntityNotFoundException("Cart is Empty");
+//
+//		}
+//
+//		else {
+//			System.out.println("aaaaa");
+//			
+//			List<OrderItem> listOrderItems = new ArrayList<OrderItem>();
+//
+//			UserOrder userOrder = new UserOrder();
+//			orderRepo.save(userOrder);
+//
+//			for (CartItem i : cartItems) {
+//				OrderItem orderItem = new OrderItem();
+//				orderItem.setProduct(i.getProduct());
+//				orderItem.setQuantity(i.getQuantity());
+//				orderItem.setUserOrder(userOrder);
+//				orderItemRepo.save(orderItem);
+//				listOrderItems.add(orderItem);
+//			}
+//			userOrder.setUser(user);
+//			userOrder.setOrderItems(listOrderItems);
+//
+//			cartItemRepo.removeFromCart(cart);
+//			cartRepo.save(cart);
+//			userRepo.save(user);
+//			orderRepo.save(userOrder);
+//			return userOrder;
+//		}
+//
+//	}
 
 }
