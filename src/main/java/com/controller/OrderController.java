@@ -46,8 +46,7 @@ public class OrderController {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<>(new GenericResponse<>(userOrders, "Order history generated Succesfully!", true),
-				HttpStatus.OK);
+		return new ResponseEntity<>(userOrders, HttpStatus.OK);
 	}
 
 	@GetMapping("/{userId}/buyNow/{productId}/{quantity}")

@@ -1,5 +1,7 @@
 package com.entity;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,6 +24,28 @@ public class UserOrder {
 	
 	@OneToMany(mappedBy= "userOrder",cascade = CascadeType.ALL)
 	private List<OrderItem> orderItems;
+	
+	private LocalDate orderDate;
+	private LocalDate deliveryDate;
+	
+
+
+
+	public LocalDate getOrderDate() {
+		return orderDate;
+	}
+
+	public void setOrderDate(LocalDate orderDate) {
+		this.orderDate = orderDate;
+	}
+
+	public LocalDate getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(LocalDate deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
 
 	public UserOrder(int orderId, UserDetails user, String orderStatus, List<OrderItem> orderItems) {
 		super();

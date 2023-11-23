@@ -105,7 +105,7 @@ public class ProductController {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
 		} 
 		
-		return new ResponseEntity<>(new GenericResponse<>( products , "Products Fetched Succesfully!", true) , HttpStatus.OK) ;
+		return new ResponseEntity<>(products  , HttpStatus.OK) ;
 		
 	}
 	
@@ -119,7 +119,7 @@ public class ProductController {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false) , HttpStatus.BAD_REQUEST) ;
 		} 
 		
-		return new ResponseEntity<>(new GenericResponse<>( products , "Products Fetched Succesfully!", true) , HttpStatus.OK) ;
+		return new ResponseEntity<>(products , HttpStatus.OK) ;
 		
 	}
 	

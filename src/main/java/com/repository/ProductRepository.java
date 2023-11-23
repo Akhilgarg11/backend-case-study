@@ -26,6 +26,7 @@ public interface ProductRepository extends JpaRepository<ProductDetails, Integer
 			)
 	List<ProductDetails> getProductsByString(@Param("str") String str);
 	
+	
 	@Query("SELECT p FROM ProductDetails p WHERE p.category IN :category AND p.brand IN :brand AND CAST(p.price as INTEGER) BETWEEN :min AND :max")
 	List<ProductDetails> getFilteredProducts(@Param("min") int minPrice, @Param("max") int maxPrice, 
 	        @Param("brand") List<String> brand, @Param("category") List<String> category);

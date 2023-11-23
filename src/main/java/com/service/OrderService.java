@@ -1,5 +1,6 @@
 package com.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,8 @@ public class OrderService {
 	public UserOrder createOrder(int userId, ArrayList<SelectedCartItem> selectedCartItems) {
 
 		UserDetails user;
-
+		LocalDate currentDate = LocalDate.now();
+		LocalDate dateAfter5Days = currentDate.plusDays(5);
 		Optional<UserDetails> getUser = userRepo.findById(userId);
 		if (getUser.isPresent()) {
 			user = (UserDetails) getUser.get();
@@ -75,7 +77,9 @@ public class OrderService {
 		}
 		userOrder.setUser(user);
 		userOrder.setOrderItems(listOrderItems);
-		
+		userOrder.setOrderStatus("Your Order has been Accepted!");
+		userOrder.setDeliveryDate(dateAfter5Days);
+		userOrder.setOrderDate(currentDate);
 		for(SelectedCartItem i : selectedCartItems) {
 			cartItemRepo.deleteByCartAndProduct(cart, i.getProduct());
 		}
@@ -102,7 +106,9 @@ public class OrderService {
 	}
 
 	public UserOrder buyNow(int userId, int productId, int quantity) {
-
+		
+		LocalDate currentDate = LocalDate.now();
+		LocalDate dateAfter5Days = currentDate.plusDays(5);
 		UserDetails user;
 
 		Optional<UserDetails> getUser = userRepo.findById(userId);
@@ -134,6 +140,9 @@ public class OrderService {
 
 		userOrder.setUser(user);
 		userOrder.setOrderItems(listOrderItems);
+		userOrder.setOrderStatus("Your Order has been Accepted!");
+		userOrder.setDeliveryDate(dateAfter5Days);
+		userOrder.setOrderDate(currentDate);
 
 		userRepo.save(user);
 		orderRepo.save(userOrder);
