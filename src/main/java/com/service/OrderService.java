@@ -102,6 +102,23 @@ public class OrderService {
 			throw new EntityNotFoundException("User Not Exist");
 		}
 
+//		ArrayList<UserOrder> orderHistory = new ArrayList<UserOrder>();
+//		int orderSize = user.getUserOrders().size();
+//		
+//		for(int i=0; i<orderSize; i++) {
+//			UserOrder userOrder = new UserOrder();
+//			userOrder.setDeliveryDate(user.getUserOrders().get(i).getDeliveryDate());
+//			userOrder.setOrderDate(user.getUserOrders().get(i).getOrderDate());
+//			userOrder.setOrderId(user.getUserOrders().get(i).getOrderId());
+//			userOrder.setOrderItems(user.getUserOrders().get(i).getOrderItems());
+//			userOrder.setOrderStatus(user.getUserOrders().get(i).getOrderStatus());
+//			userOrder.setUser(user.getUserOrders().get(i).getUser());
+//			
+//			orderHistory.add(userOrder);
+//		}
+//		
+//		return orderHistory;
+		
 		return user.getUserOrders();
 	}
 

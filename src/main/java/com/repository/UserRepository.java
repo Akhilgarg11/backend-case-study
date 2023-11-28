@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<UserDetails, Integer>{
 	@Query("SELECT u FROM UserDetails u WHERE u.email = :email AND u.password = :password AND u.role = 'seller'")
 	Optional<UserDetails> ifCorrectSellerCredentials(@Param("email") String email, @Param("password") String password);
 	
+	@Query("SELECT u FROM UserDetails u WHERE u.email = :email")
+	Optional<UserDetails> getUserByEmail(@Param("email") String email);
+	
 }

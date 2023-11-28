@@ -53,7 +53,21 @@ public class UserController {
 		try {
 			user = this.userService.createUser(signupRequest);
 		} catch (Exception e) {
-			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>( e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(
+				new GenericResponse<>("userID:" + user.getUserID(), "Account Created Succesfully!", true),
+				HttpStatus.OK);
+	}
+	
+	@PostMapping("/signupNew")
+	public ResponseEntity<?> signupNew(@RequestBody SignupRequest signupRequest) {
+		UserDetails user;
+		try {
+			user = this.userService.createUser(signupRequest);
+		} catch (Exception e) {
+			return new ResponseEntity<>( e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
 		return new ResponseEntity<>(
@@ -140,6 +154,17 @@ public class UserController {
 
 		return new ResponseEntity<>(products, HttpStatus.OK);
 
+	}
+	
+	@PostMapping("/getAccountByEmail")
+	public ResponseEntity<?> getAccountByEmail(@RequestBody SignupRequest signupRequest){
+		boolean res;
+		try {
+			res = this.userService.getAccountByEmail(signupRequest);
+		} catch(Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 }

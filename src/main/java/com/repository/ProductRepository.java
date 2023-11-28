@@ -1,9 +1,11 @@
 package com.repository;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.mapping.Selectable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -50,5 +52,9 @@ public interface ProductRepository extends JpaRepository<ProductDetails, Integer
 	
 	@Query("Select p from ProductDetails as p")
 	Optional<List<ProductDetails>> getAllProducts();
+	
+	@Query("Select p from ProductDetails as p")
+	Optional<List<ProductDetails>> getAllProductsPaginated(PageRequest pageable);
+	
 
 }

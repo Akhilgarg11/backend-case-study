@@ -7,12 +7,21 @@ import com.entity.UserAddress;
 import com.entity.UserOrder;
 
 public class UserResponse {
+	private int userId;
+	
 	private String name;
 	private String email;
 	private String phone;
 	private List<UserOrder> userOrders;
     private	Cart cart;
     private UserAddress address;
+    
+    public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 	
     public String getName() {
 		return name;

@@ -22,8 +22,26 @@ public class UserService {
 
 	@Autowired
 	private AddressRepository addressRepo;
+	
+	public boolean getAccountByEmail(SignupRequest signupRequest) {
+		String email = signupRequest.getEmail();
+		Optional<UserDetails> optional = userRepository.getUserByEmail(email);
+		
+		if(!optional.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
 
-	public UserDetails createUser(SignupRequest signupRequest) {
+	public UserDetails createUser(SignupRequest signupRequest) throws Exception {
+		String email = signupRequest.getEmail();
+		Optional<UserDetails> optional = userRepository.getUserByEmail(email);
+		
+		if(!optional.isEmpty()) {
+			throw new Exception("Account with this email already exists");
+		}
+		
+		else {
 
 		UserDetails user = new UserDetails();
 		user.setEmail(signupRequest.getEmail());
@@ -35,7 +53,22 @@ public class UserService {
 		userRepository.save(user);
 
 		return user;
+		}	
+	}
+	
+	public UserDetails createUserNew(SignupRequest signupRequest) {
 
+
+		UserDetails user = new UserDetails();
+		user.setEmail(signupRequest.getEmail());
+		user.setName(signupRequest.getName());
+		user.setPassword(signupRequest.getPassword());
+
+		user.setRole("user");
+
+		userRepository.save(user);
+
+		return user;
 	}
 
 	public UserDetails createSeller(SignupRequest signupRequest) {
@@ -113,11 +146,11 @@ public class UserService {
 		UserResponse userProfile = new UserResponse();
 		
 		userProfile.setAddress(user.getAddress());
-		userProfile.setCart(user.getCart());
+//		userProfile.setCart(user.getCart());
 		userProfile.setEmail(user.getEmail());
 		userProfile.setName(user.getName());
 		userProfile.setPhone(user.getPhone());
-		userProfile.setUserOrders(user.getUserOrders());
+//		userProfile.setUserOrders(user.getUserOrders());
 		
 		return userProfile;
 	}

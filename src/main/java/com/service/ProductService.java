@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +80,36 @@ public class ProductService {
 		else return null;
 		
 	}
+	
+	public List<GetProductResponse> getAllProductsPaginated(int page, int size) {
+	    PageRequest pageable = PageRequest.of(page, size);
+	    System.out.println(page);
+	    System.out.println(size);
+	    Optional<List<ProductDetails>> optional = productRepository.getAllProductsPaginated(pageable);
+
+	    List<GetProductResponse> list = new ArrayList<GetProductResponse>();
+	    if (optional.isPresent()) {
+	        List<ProductDetails> p = optional.get();
+	        
+
+	        for (ProductDetails product : p) {
+	            GetProductResponse resp = new GetProductResponse();
+	            resp.setBrand(product.getBrand());
+	            resp.setCategory(product.getCategory());
+	            resp.setDetails(product.getDetails());
+	            resp.setName(product.getName());
+	            resp.setPrice(product.getPrice());
+	            resp.setProductImage(product.getProductImage());
+	            resp.setProductId(product.getProductID());
+	            list.add(resp);
+	        }
+
+	    }
+        return  list;
+
+	}
+
+
 
 	public ProductDetails getProduct(int id) {
 
@@ -116,8 +149,7 @@ public class ProductService {
 		MAXPRICE = Math.max(MAXPRICE, Integer.parseInt(updateProduct.getPrice()));
 		productRepository.save(product);
 
-		return product;
-
+		return product;	
 	}
 
 	public List<ProductDetails> getProductsByCategory(String category) {
@@ -151,10 +183,10 @@ public class ProductService {
 		List<String> brand = filterObj.getBrand();
 		List<String> category = filterObj.getCategory();
 
-		if (brand == null)
+		if (brand == null || brand.size()== 0)
 			brand = productRepository.getAllBrands();
 
-		if (category == null)
+		if (category == null || category.size() == 0)
 			category = productRepository.getAllCategory();
 
 		List<ProductDetails> list = productRepository.getFilteredProducts(minPrice, maxPrice, brand, category);
