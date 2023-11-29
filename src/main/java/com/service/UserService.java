@@ -146,7 +146,7 @@ public class UserService {
 		UserResponse userProfile = new UserResponse();
 		
 		userProfile.setAddress(user.getAddress());
-//		userProfile.setCart(user.getCart());
+		userProfile.setCart(user.getCart());
 		userProfile.setEmail(user.getEmail());
 		userProfile.setName(user.getName());
 		userProfile.setPhone(user.getPhone());

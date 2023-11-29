@@ -60,6 +60,19 @@ public class CartController {
 
 		return new ResponseEntity<>(new GenericResponse<>(item, "Cart Item Fetched Succesfully!", true), HttpStatus.OK);
 	}
+	
+	@GetMapping("/{userId}/getCartItemByProduct/{productId}")
+	public ResponseEntity<?> getcartItemByUserIdAndproductId(@PathVariable("userId") int userId,
+			@PathVariable("productId") int productId) {
+		CartItem item;
+		try {
+			item = this.cartService.getCartItemByUserIdandproductId(userId, productId);
+		} catch (Exception e) {
+			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(item, HttpStatus.OK);
+	}
 
 	@GetMapping("/{userId}/remove/{productId}")
 	public ResponseEntity<?> removeFromCart(@PathVariable("userId") int userId,

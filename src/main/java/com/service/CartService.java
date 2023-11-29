@@ -93,6 +93,19 @@ public class CartService {
 
 		return item;
 	}
+	
+	public CartItem getCartItemByUserIdandproductId(int userId, int productId) {
+		Cart cart = userRepo.findCartByUserId(userId);
+		
+		Optional<ProductDetails> optional = productRepo.findById(productId);
+		ProductDetails product = (ProductDetails) optional.get();
+
+		Optional<CartItem> getItem = itemRepo.findByCartAndProduct(cart, product);
+		
+		CartItem item = getItem.get();
+
+		return item;
+	}
 
 	@Transactional
 	public ProductDetails removeFromCart(int userId, int productId) {
@@ -145,5 +158,7 @@ public class CartService {
 
 		return cart;
 	}
+	
+	
 
 }

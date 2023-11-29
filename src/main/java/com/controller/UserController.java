@@ -44,7 +44,7 @@ public class UserController {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<>(new GenericResponse<>(userId, "----", true), HttpStatus.OK);
+		return new ResponseEntity<>(new GenericResponse<>(userId, "----", true) , HttpStatus.OK);
 	}
 
 	@PostMapping("/signup")
@@ -57,23 +57,23 @@ public class UserController {
 		}
 
 		return new ResponseEntity<>(
-				new GenericResponse<>("userID:" + user.getUserID(), "Account Created Succesfully!", true),
+				new GenericResponse<>(user.getUserID(), "Account Created Succesfully!", true),
 				HttpStatus.OK);
 	}
 	
-	@PostMapping("/signupNew")
-	public ResponseEntity<?> signupNew(@RequestBody SignupRequest signupRequest) {
-		UserDetails user;
-		try {
-			user = this.userService.createUser(signupRequest);
-		} catch (Exception e) {
-			return new ResponseEntity<>( e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-
-		return new ResponseEntity<>(
-				new GenericResponse<>("userID:" + user.getUserID(), "Account Created Succesfully!", true),
-				HttpStatus.OK);
-	}
+//	@PostMapping("/signupNew")
+//	public ResponseEntity<?> signupNew(@RequestBody SignupRequest signupRequest) {
+//		UserDetails user;
+//		try {
+//			user = this.userService.createUser(signupRequest);
+//		} catch (Exception e) {
+//			return new ResponseEntity<>( e.getMessage(), HttpStatus.BAD_REQUEST);
+//		}
+//
+//		return new ResponseEntity<>(
+//				new GenericResponse<>("userID:" + user.getUserID(), "Account Created Succesfully!", true),
+//				HttpStatus.OK);
+//	}
 
 	@PostMapping("/seller/login")
 	public ResponseEntity<?> sellerLogin(@RequestBody LoginRequest loginRequest) {
@@ -97,7 +97,7 @@ public class UserController {
 		}
 
 		return new ResponseEntity<>(
-				new GenericResponse<>("userID:" + user.getUserID(), "Seller Account Created Succesfully!", true),
+				new GenericResponse<>( user.getUserID(), "Seller Account Created Succesfully!", true),
 				HttpStatus.OK);
 	}
 
