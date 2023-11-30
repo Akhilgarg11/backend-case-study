@@ -27,9 +27,6 @@ public class UserOrder {
 	
 	private LocalDate orderDate;
 	private LocalDate deliveryDate;
-	
-
-
 
 	public LocalDate getOrderDate() {
 		return orderDate;

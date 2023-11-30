@@ -20,6 +20,9 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
+//	@Autowired
+//    private PasswordEncoder passwordEncoder;
+	
 	@Autowired
 	private AddressRepository addressRepo;
 	
@@ -46,8 +49,8 @@ public class UserService {
 		UserDetails user = new UserDetails();
 		user.setEmail(signupRequest.getEmail());
 		user.setName(signupRequest.getName());
+//		user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));	
 		user.setPassword(signupRequest.getPassword());
-
 		user.setRole("user");
 
 		userRepository.save(user);
@@ -75,8 +78,8 @@ public class UserService {
 		UserDetails user = new UserDetails();
 		user.setEmail(signupRequest.getEmail());
 		user.setName(signupRequest.getName());
+//		user.setPassword(passwordEncoder.encode(user.getPassword()));	
 		user.setPassword(signupRequest.getPassword());
-
 		user.setRole("seller");
 
 		userRepository.save(user);
@@ -113,6 +116,8 @@ public class UserService {
 
 		String email = loginRequest.getEmail();
 		String password = loginRequest.getPassword();
+		
+		//String password = passwordEncoder.encode(passwordString);
 
 		Optional<UserDetails> userOptional = userRepository.ifCorrectUserCredentials(email, password);
 
