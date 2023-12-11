@@ -20,145 +20,207 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class CartService {
 
-	@Autowired
-	private CartRepository cartRepo;
+    @Autowired
+    private CartRepository cartRepo;
 
-	@Autowired
-	private CartItemRepository itemRepo;
+    @Autowired
+    private CartItemRepository itemRepo;
 
-	@Autowired
-	private ProductRepository productRepo;
+    @Autowired
+    private ProductRepository productRepo;
 
-	@Autowired
-	private UserRepository userRepo;
+    @Autowired
+    private UserRepository userRepo;
 
-	@Transactional
-	public CartItem addToCart(int userId, int productId, int quantity) {
+    /**
+     * Adds a product to the user's cart.
+     *
+     * @param userId    The ID of the user.
+     * @param productId The ID of the product to add.
+     * @param quantity  The quantity of the product to add.
+     * @return The created CartItem.
+     * @throws EntityNotFoundException If the user or product is not found.
+     */
+    @Transactional
+    public CartItem addToCart(int userId, int productId, int quantity) {
+        UserDetails user;
 
-		UserDetails user;
+        // Retrieve the user by ID
+        Optional<UserDetails> getUser = userRepo.findById(userId);
+        if (getUser.isPresent()) {
+            user = getUser.get();
+        } else {
+            throw new EntityNotFoundException("User Not Exist");
+        }
 
-		Optional<UserDetails> getUser = userRepo.findById(userId);
-		if (getUser.isPresent()) {
-			user = (UserDetails) getUser.get();
-		} else {
-			throw new EntityNotFoundException("User Not Exist");
-		}
+        // Retrieve the user's cart
+        Cart cart = userRepo.findCartByUserId(userId);
 
-		Cart cart = userRepo.findCartByUserId(userId);
+        // If the user doesn't have a cart, create a new one
+        if (cart == null) {
+            cart = new Cart();
+            cart.setUser(user);
+            cartRepo.save(cart);
+        }
 
-		if (cart == null) {
-			cart = new Cart();
-			cart.setUser(user);
-			cartRepo.save(cart);
-		}
+        // Retrieve the product by ID
+        Optional<ProductDetails> optional = productRepo.findById(productId);
+        ProductDetails product = optional.orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-		Optional<ProductDetails> optional = productRepo.findById(productId);
-		ProductDetails product = (ProductDetails) optional.get();
+        // Check if the product is already in the cart
+        Optional<CartItem> existingCartItem = itemRepo.findByCartAndProduct(cart, product);
+        CartItem cartItem;
+        if (existingCartItem.isPresent()) {
+            // If the product is already in the cart, update the quantity
+            cartItem = existingCartItem.get();
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+        } else {
+            // If the product is not in the cart, create a new cart item
+            cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setCart(cart);
+            cartItem.setQuantity(quantity);
+        }
 
-		if (product == null)
-			throw new EntityNotFoundException("Product not found");
+        // Save the cart item, update user's cart, and save the cart
+        itemRepo.save(cartItem);
+        user.setCart(cart);
+        userRepo.save(user);
+        cartRepo.save(cart);
 
-		Optional<CartItem> existingCartItem = itemRepo.findByCartAndProduct(cart, product);
-		CartItem cartItem;
-		if (existingCartItem.isPresent()) {
-			cartItem = existingCartItem.get();
-			cartItem.setQuantity(cartItem.getQuantity() + quantity);
-		} else {
+        return cartItem;
+    }
 
-			cartItem = new CartItem();
-			cartItem.setProduct(product);
-			cartItem.setCart(cart);
-			cartItem.setQuantity(quantity);
+    /**
+     * Retrieves the cart for the specified user.
+     *
+     * @param userId The ID of the user.
+     * @return The user's cart.
+     */
+    public Cart getCart(int userId) {
+        // Retrieve the user's cart by ID
+        Cart cart = userRepo.findCartByUserId(userId);
+        return cart;
+    }
 
-		}
-		itemRepo.save(cartItem);
-		user.setCart(cart);
-		userRepo.save(user);
-		cartRepo.save(cart);
+    /**
+     * Retrieves a specific cart item by user and item ID.
+     *
+     * @param userId The ID of the user.
+     * @param itemId The ID of the cart item.
+     * @return The specified CartItem.
+     */
+    public CartItem getCartItem(int userId, int itemId) {
+        // Retrieve the user's cart
+        Cart cart = userRepo.findCartByUserId(userId);
+        // Retrieve the cart item by cart and item ID
+        Optional<CartItem> getItem = itemRepo.findByCartAndId(cart, itemId);
+        return getItem.orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
+    }
 
-		return cartItem;
-	}
+    /**
+     * Retrieves a specific cart item by user and product ID.
+     *
+     * @param userId    The ID of the user.
+     * @param productId The ID of the product.
+     * @return The specified CartItem.
+     */
+    public CartItem getCartItemByUserIdAndProductId(int userId, int productId) {
+        // Retrieve the user's cart
+        Cart cart = userRepo.findCartByUserId(userId);
+        // Retrieve the product by ID
+        Optional<ProductDetails> optional = productRepo.findById(productId);
+        ProductDetails product = optional.orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        // Retrieve the cart item by cart and product
+        Optional<CartItem> getItem = itemRepo.findByCartAndProduct(cart, product);
+        return getItem.orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
+    }
 
-	public Cart getCart(int userId) {
+    /**
+     * Removes a product from the user's cart.
+     *
+     * @param userId    The ID of the user.
+     * @param productId The ID of the product to remove.
+     * @return The removed ProductDetails.
+     * @throws EntityNotFoundException If the product is not found.
+     */
+    @Transactional
+    public ProductDetails removeFromCart(int userId, int productId) {
+        // Retrieve the user's cart
+        Cart cart = userRepo.findCartByUserId(userId);
 
-		Cart cart = userRepo.findCartByUserId(userId);
+        // Retrieve the product by ID
+        Optional<ProductDetails> optional = productRepo.findById(productId);
 
-		return cart;
-	}
+        // Throw exception if product not found
+        if (!optional.isPresent()) {
+            throw new EntityNotFoundException("Product not found");
+        }
 
-	public CartItem getCartItem(int userId, int itemId) {
-		Cart cart = userRepo.findCartByUserId(userId);
-		Optional<CartItem> getItem = itemRepo.findByCartAndId(cart, itemId);
-		CartItem item = getItem.get();
+        // Retrieve the product
+        ProductDetails product = optional.get();
 
-		return item;
-	}
-	
-	public CartItem getCartItemByUserIdandproductId(int userId, int productId) {
-		Cart cart = userRepo.findCartByUserId(userId);
-		
-		Optional<ProductDetails> optional = productRepo.findById(productId);
-		ProductDetails product = (ProductDetails) optional.get();
+        // Delete the cart item by cart and product
+        itemRepo.deleteByCartAndProduct(cart, product);
 
-		Optional<CartItem> getItem = itemRepo.findByCartAndProduct(cart, product);
-		
-		CartItem item = getItem.get();
+        return product;
+    }
 
-		return item;
-	}
+    /**
+     * Changes the quantity of a cart item by its ID.
+     *
+     * @param itemId   The ID of the cart item.
+     * @param quantity The new quantity.
+     * @return The updated Cart.
+     */
+    @Transactional
+    public Cart changeQuantityByItemId(int itemId, int quantity) {
+        // Retrieve the cart item by ID
+        Optional<CartItem> itemOptional = itemRepo.findById(itemId);
+        CartItem item = itemOptional.orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
 
-	@Transactional
-	public ProductDetails removeFromCart(int userId, int productId) {
-		Cart cart = userRepo.findCartByUserId(userId);
+        // If quantity is less than or equal to 0, delete the cart item
+        if (quantity <= 0) {
+            itemRepo.deleteById(itemId);
+        } else {
+            // Update the quantity
+            item.setQuantity(quantity);
+        }
 
-		Optional<ProductDetails> optional = productRepo.findById(productId);
+        // Retrieve the cart associated with the item
+        Cart cart = item.getCart();
+        return cart;
+    }
 
-		if (!optional.isPresent()) {
-			throw new EntityNotFoundException("Product not found");
-		}
+    /**
+     * Changes the quantity of a cart item by user and product ID.
+     *
+     * @param userId    The ID of the user.
+     * @param productId The ID of the product.
+     * @param quantity  The new quantity.
+     * @return The updated Cart.
+     */
+    @Transactional
+    public Cart changeQuantityByUserIdAndProductId(int userId, int productId, int quantity) {
+        // Retrieve the user's cart by ID
+        Cart cart = userRepo.findCartByUserId(userId);
 
-		ProductDetails product = (ProductDetails) optional.get();
+        // Retrieve the product by ID
+        Optional<ProductDetails> optional = productRepo.findById(productId);
+        ProductDetails product = optional.orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-		itemRepo.deleteByCartAndProduct(cart, product);
+        // Retrieve the cart item by cart and product
+        Optional<CartItem> itemOptional = itemRepo.findByCartAndProduct(cart, product);
+        CartItem item = itemOptional.orElseThrow(() -> new EntityNotFoundException("Cart item not found"));
 
-		return product;
-	}
+        // If quantity is less than or equal to 0, delete the cart item
+        if (quantity <= 0) {
+            itemRepo.deleteByCartAndProduct(cart, product);
+        } else {
+            // Update the quantity
+            item.setQuantity(quantity);
+        }
 
-	@Transactional
-	public Cart changeQuantityByItemId(int itemId, int quantity) {
-		Optional<CartItem> itemOptional = itemRepo.findById(itemId);
-		CartItem item = itemOptional.get();
-		
-		if(quantity <= 0) {
-			itemRepo.deleteById(itemId);
-		}
-
-		else item.setQuantity(quantity);
-
-		Cart cart = item.getCart();
-		return cart;
-
-	}
-
-	@Transactional
-	public Cart changeQuantityByUserIdAndProductId(int userId, int productId, int quantity) {
-
-		Cart cart = userRepo.findCartByUserId(userId);
-		Optional<ProductDetails> optional = productRepo.findById(productId);
-		ProductDetails product = (ProductDetails) optional.get();
-
-		Optional<CartItem> itemOptional = itemRepo.findByCartAndProduct(cart, product);
-		CartItem item = itemOptional.get();
-		
-		if(quantity <= 0) {
-			itemRepo.deleteByCartAndProduct(cart, product);
-		}
-
-		else item.setQuantity(quantity);
-
-		return cart;
-	}
-	
-	
-
+        return cart;
+    }
 }

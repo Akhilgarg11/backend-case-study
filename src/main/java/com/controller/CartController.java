@@ -49,7 +49,7 @@ public class CartController {
 	}
 
 	@GetMapping("/{userId}/getCartItem/{itemId}")
-	public ResponseEntity<?> getcartItemByUserIdAndItemId(@PathVariable("userId") int userId,
+	public ResponseEntity<?> getCartItemByUserIdAndProductId(@PathVariable("userId") int userId,
 			@PathVariable("itemId") int itemId) {
 		CartItem item;
 		try {
@@ -66,7 +66,7 @@ public class CartController {
 			@PathVariable("productId") int productId) {
 		CartItem item;
 		try {
-			item = this.cartService.getCartItemByUserIdandproductId(userId, productId);
+			item = this.cartService.getCartItemByUserIdAndProductId(userId, productId);
 		} catch (Exception e) {
 			return new ResponseEntity<>(new GenericResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
 		}
